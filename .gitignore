@@ -1,0 +1,12 @@
+# Maven build files
+target/
+
+# VS Code settings
+.vscode/
+
+# Environment/secrets file (VERY important - never upload passwords)
+config.properties
+
+# System files
+.DS_Store
+Thumbs.db
