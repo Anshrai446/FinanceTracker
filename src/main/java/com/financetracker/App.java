@@ -47,7 +47,7 @@ public class App {
         System.out.println("1. Add Transaction");
         System.out.println("2. View All Transactions");
         System.out.println("3. Monthly Summary");
-        System.out.println("4. AI Advisor (Coming soon!)");
+        System.out.println("4. AI Advisor 🤖");
         System.out.println("5. Logout");
         System.out.print("Choose: ");
         String choice = scanner.nextLine();
