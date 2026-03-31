@@ -55,7 +55,14 @@ public class App {
             case "1" -> handleAddTransaction();
             case "2" -> financeService.viewTransactions(loggedInUser.getId());
             case "3" -> handleMonthlySummary();
-            case "4" -> System.out.println("AI Advisor coming on Day 5!");
+            case "4" -> {
+    System.out.println("\n🤖 Consulting AI Advisor...\n");
+    String advice = financeService.getAIAdvice(loggedInUser.getId());
+    System.out.println("💡 AI Advisor Says:");
+    System.out.println("─────────────────────────────");
+    System.out.println(advice);
+    System.out.println("─────────────────────────────");
+}
             case "5" -> { loggedInUser = null; System.out.println("Logged out."); }
             default -> System.out.println("Invalid choice.");
         }
