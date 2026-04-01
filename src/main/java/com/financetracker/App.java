@@ -85,22 +85,88 @@ private static void handleLogin() {
 }
 
     private static void handleAddTransaction() {
-        System.out.print("Type (INCOME/EXPENSE): ");
-        String type = scanner.nextLine();
-        System.out.print("Category (Food/Salary/Transport etc): ");
-        String category = scanner.nextLine();
-        System.out.print("Amount: ");
+    System.out.println("\n--- Add Transaction ---");
+    System.out.println("1. Income");
+    System.out.println("2. Expense");
+    System.out.print("Choose type: ");
+    String typeChoice = scanner.nextLine();
+
+    String type;
+    String[] categories;
+
+    if (typeChoice.equals("1")) {
+        type = "INCOME";
+        System.out.println("\nSelect Income Source:");
+        System.out.println("1. Salary");
+        System.out.println("2. Freelance");
+        System.out.println("3. Business Profit");
+        System.out.println("4. Investment Returns");
+        System.out.println("5. Gift / Bonus");
+        System.out.println("6. Other");
+        System.out.print("Choose category: ");
+        String catChoice = scanner.nextLine();
+        categories = new String[]{"Salary", "Freelance",
+            "Business Profit", "Investment Returns", "Gift/Bonus", "Other"};
+        String category = getCategory(catChoice, categories);
+
+        System.out.print("Amount (Rs.): ");
         String amount = scanner.nextLine();
         System.out.print("Description: ");
         String description = scanner.nextLine();
-        System.out.print("Date (yyyy-MM-dd) or press Enter for today: ");
+        System.out.print("Date (yyyy-MM-dd) or Enter for today: ");
         String dateStr = scanner.nextLine();
-        if (dateStr.trim().isEmpty()) {
-            dateStr = LocalDate.now().toString();
-        }
+        if (dateStr.trim().isEmpty()) dateStr = java.time.LocalDate.now().toString();
+
         financeService.addTransaction(
             loggedInUser.getId(), type, category, amount, description, dateStr);
+
+    } else if (typeChoice.equals("2")) {
+        type = "EXPENSE";
+        System.out.println("\nSelect Expense Category:");
+        System.out.println("1. Food & Dining");
+        System.out.println("2. Grocery");
+        System.out.println("3. Transport");
+        System.out.println("4. Shopping");
+        System.out.println("5. Medical");
+        System.out.println("6. Education");
+        System.out.println("7. Luxury");
+        System.out.println("8. Rent & Bills");
+        System.out.println("9. Other");
+        System.out.print("Choose category: ");
+        String catChoice = scanner.nextLine();
+        categories = new String[]{"Food & Dining", "Grocery", "Transport",
+            "Shopping", "Medical", "Education", "Luxury", "Rent & Bills", "Other"};
+        String category = getCategory(catChoice, categories);
+
+        System.out.print("Amount (Rs.): ");
+        String amount = scanner.nextLine();
+        System.out.print("Description: ");
+        String description = scanner.nextLine();
+        System.out.print("Date (yyyy-MM-dd) or Enter for today: ");
+        String dateStr = scanner.nextLine();
+        if (dateStr.trim().isEmpty()) dateStr = java.time.LocalDate.now().toString();
+
+        financeService.addTransaction(
+            loggedInUser.getId(), type, category, amount, description, dateStr);
+
+    } else {
+        System.out.println("Invalid choice. Please select 1 or 2.");
     }
+}
+
+// Helper method — converts number choice to category name
+private static String getCategory(String choice, String[] categories) {
+    try {
+        int index = Integer.parseInt(choice) - 1;
+        if (index >= 0 && index < categories.length) {
+            return categories[index];
+        }
+    } catch (NumberFormatException e) {
+        // ignore
+    }
+    System.out.println("Invalid choice. Setting category to 'Other'.");
+    return "Other";
+}
 
     private static void handleMonthlySummary() {
         System.out.print("Enter month (1-12): ");

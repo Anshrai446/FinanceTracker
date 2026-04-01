@@ -50,18 +50,68 @@ public class FinanceService {
         return success;
     }
 
-    public void viewTransactions(int userId) {
-        List<Transaction> list = transactionDAO.getTransactionsByUser(userId);
-        if (list.isEmpty()) {
-            System.out.println("No transactions found.");
-            return;
-        }
-        System.out.println("\n======= Your Transactions =======");
-        for (Transaction t : list) {
-            System.out.println(t);
-        }
-        System.out.println("=================================");
+   public void viewTransactions(int userId) {
+    List<Transaction> list = transactionDAO.getTransactionsByUser(userId);
+
+    if (list.isEmpty()) {
+        System.out.println("No transactions found.");
+        return;
     }
+
+    // Sort by date ascending (oldest first — like a bank statement)
+    list.sort((a, b) -> a.getDate().compareTo(b.getDate()));
+
+    System.out.println("\n╔════════════════════════════════════════════════════════╗");
+    System.out.println("║           📊 TRANSACTION STATEMENT                    ║");
+    System.out.println("╚════════════════════════════════════════════════════════╝");
+
+    java.math.BigDecimal runningBalance = java.math.BigDecimal.ZERO;
+    java.math.BigDecimal totalIncome = java.math.BigDecimal.ZERO;
+    java.math.BigDecimal totalExpense = java.math.BigDecimal.ZERO;
+    String currentDate = "";
+
+    for (Transaction t : list) {
+        // Print date header when date changes
+        String txDate = t.getDate().toString();
+        if (!txDate.equals(currentDate)) {
+            currentDate = txDate;
+            System.out.println("\n  📅 " + currentDate);
+            System.out.println("  " + "─".repeat(54));
+        }
+
+        if (t.getType().equals("INCOME")) {
+            runningBalance = runningBalance.add(t.getAmount());
+            totalIncome = totalIncome.add(t.getAmount());
+            System.out.printf("  ✅ %-20s %-15s + Rs.%-10.2f | Balance: Rs.%.2f%n",
+                t.getCategory(), t.getDescription(),
+                t.getAmount(), runningBalance);
+        } else {
+            runningBalance = runningBalance.subtract(t.getAmount());
+            totalExpense = totalExpense.add(t.getAmount());
+            System.out.printf("  ❌ %-20s %-15s - Rs.%-10.2f | Balance: Rs.%.2f%n",
+                t.getCategory(), t.getDescription(),
+                t.getAmount(), runningBalance);
+        }
+    }
+
+    // Summary at the bottom
+    System.out.println("\n  " + "═".repeat(54));
+    System.out.println("  📈 SUMMARY");
+    System.out.println("  " + "─".repeat(54));
+    System.out.printf("  💰 Total Income  : Rs.%.2f%n", totalIncome);
+    System.out.printf("  💸 Total Expense : Rs.%.2f%n", totalExpense);
+    System.out.printf("  🏦 Net Savings   : Rs.%.2f%n",
+        totalIncome.subtract(totalExpense));
+
+    if (totalIncome.compareTo(java.math.BigDecimal.ZERO) > 0) {
+        double savingsRate = totalIncome.subtract(totalExpense)
+            .divide(totalIncome, 4, java.math.RoundingMode.HALF_UP)
+            .multiply(java.math.BigDecimal.valueOf(100))
+            .doubleValue();
+        System.out.printf("  📊 Savings Rate  : %.1f%%%n", savingsRate);
+    }
+    System.out.println("  " + "═".repeat(54));
+}
 
     public void viewMonthlySummary(int userId, int month, int year) {
         transactionDAO.getMonthlySummary(userId, month, year);
