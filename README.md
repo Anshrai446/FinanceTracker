@@ -55,7 +55,20 @@ src/main/java/com/financetracker/
 ```
 
 ---
-
+## 🔄 Application Architecture
+```mermaid
+flowchart TD
+    A((User)) -->|commands| B[App.java\nConsole Menu]
+    B -->|auth| C[AuthService.java\nValidate · Login · Register]
+    B -->|finance| D[FinanceService.java\nTransactions · AI Advice]
+    C --> E[UserDAO.java\nINSERT · SELECT users]
+    D --> F[TransactionDAO.java\nINSERT · SELECT · GROUP BY]
+    D -->|AI call| G((AIAdvisor.java))
+    G --> H[Gemini 2.5\nGoogle AI API]
+    E --> I[DBConnection.java\nSingleton · config.properties]
+    F --> I
+    I -->|JDBC| J[(MySQL Database\nusers · transactions)]
+```
 ## ⚙️ Setup & Installation
 
 ### Prerequisites
